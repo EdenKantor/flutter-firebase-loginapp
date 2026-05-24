@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "23885517471",
+    "project_id": "loginapp-b3a2a",
+    "storage_bucket": "loginapp-b3a2a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23885517471:android:c9259e87f7d00c0fff08aa",
+        "android_client_info": {
+          "package_name": "com.example.logionapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL3Wz7AK8Iw6Zgqr1W5IYv2G1lh1IVm-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
