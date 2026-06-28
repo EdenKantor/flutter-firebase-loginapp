@@ -136,13 +136,22 @@ class _SignupPageState extends State<SignupPage> {
       await cred.user?.updateDisplayName(_fullName);
 
       // 3) Persist additional profile fields in Firestore (users/{uid}).
+      //    Best-effort: the account already exists in Firebase Auth (step 1),
+      //    and the rest of the app (Profile/Settings) tolerates a missing user
+      //    doc. So a Firestore failure here — e.g. the database isn't enabled
+      //    or security rules deny the write — must NOT block sign-up or be shown
+      //    to the user as an error.
       final uid = cred.user!.uid;
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'uid': uid,
-        'fullName': _fullName,
-        'email': _email.trim(),
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'uid': uid,
+          'fullName': _fullName,
+          'email': _email.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      } catch (e) {
+        debugPrint('Signup: Firestore profile write failed (ignored): $e');
+      }
 
       // AuthGate (in main.dart) will automatically navigate to WelcomePage
       // because the auth state stream now emits a signed-in user. We only
@@ -152,9 +161,9 @@ class _SignupPageState extends State<SignupPage> {
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       _showError(_mapAuthError(e));
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      _showError('Unexpected error. Please try again.');
+      _showError('Unexpected error. Please try again.\n\n$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
